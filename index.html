@@ -1,0 +1,1311 @@
+<!doctype html>
+
+<html lang="ja">
+
+<head>
+
+<meta charset="utf-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<meta name="robots" content="noindex,nofollow,noarchive">
+
+<title>ネジの強度計算｜力の流れから理解する</title>
+
+<style>
+
+:root {
+
+  color-scheme: dark;
+
+  --bg: #0a111c;
+
+  --panel: #131f30;
+
+  --line: #2c4058;
+
+  --text: #ecf2fa;
+
+  --muted: #a7b9ce;
+
+  --blue: #69b9ff;
+
+  --gold: #ffd16b;
+
+  --green: #71dbb1;
+
+  --red: #ff8585;
+
+}
+
+* {
+
+  box-sizing: border-box;
+
+}
+
+body {
+
+  margin: 0;
+
+  background: var(--bg);
+
+  color: var(--text);
+
+  font-family:
+
+    -apple-system,
+
+    BlinkMacSystemFont,
+
+    "Segoe UI",
+
+    "Noto Sans JP",
+
+    sans-serif;
+
+  line-height: 1.65;
+
+}
+
+main {
+
+  padding: 24px 12px 50px;
+
+}
+
+.wrap {
+
+  position: relative;
+
+  margin: 0 auto 24px;
+
+}
+
+.slide {
+
+  width: 960px;
+
+  height: 720px;
+
+  transform-origin: top left;
+
+  padding: 38px 42px;
+
+  background: linear-gradient(135deg, #142135, #0d1725);
+
+  border: 1px solid var(--line);
+
+  border-radius: 20px;
+
+  overflow: hidden;
+
+  position: relative;
+
+}
+
+.eyebrow {
+
+  font-size: 13px;
+
+  color: var(--gold);
+
+  letter-spacing: 2px;
+
+  font-weight: 700;
+
+}
+
+h1 {
+
+  font-size: 43px;
+
+  line-height: 1.35;
+
+  margin: 18px 0;
+
+}
+
+h2 {
+
+  font-size: 29px;
+
+  line-height: 1.4;
+
+  margin: 8px 0 12px;
+
+}
+
+h3 {
+
+  font-size: 18px;
+
+  margin: 0 0 10px;
+
+}
+
+p {
+
+  margin: 8px 0 14px;
+
+}
+
+.sub {
+
+  color: var(--muted);
+
+  font-size: 16px;
+
+}
+
+.grid {
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 20px;
+
+}
+
+.card {
+
+  padding: 20px;
+
+  background: #17263a;
+
+  border: 1px solid var(--line);
+
+  border-radius: 14px;
+
+}
+
+.formula {
+
+  padding: 13px 17px;
+
+  margin: 12px 0;
+
+  border-left: 3px solid var(--gold);
+
+  background: #0b1728;
+
+  font-size: 22px;
+
+  font-weight: 600;
+
+  font-variant-numeric: tabular-nums;
+
+}
+
+.small {
+
+  font-size: 14px;
+
+  color: var(--muted);
+
+}
+
+.note {
+
+  padding: 11px 15px;
+
+  background: #253247;
+
+  border-radius: 10px;
+
+  font-size: 15px;
+
+}
+
+.page {
+
+  position: absolute;
+
+  bottom: 21px;
+
+  right: 35px;
+
+  color: var(--muted);
+
+  font-size: 13px;
+
+}
+
+.tag {
+
+  color: var(--gold);
+
+}
+
+.blue {
+
+  color: var(--blue);
+
+}
+
+.green {
+
+  color: var(--green);
+
+}
+
+svg {
+
+  width: 100%;
+
+  display: block;
+
+}
+
+svg text {
+
+  font-family: inherit;
+
+  fill: var(--text);
+
+  font-size: 17px;
+
+}
+
+table {
+
+  width: 100%;
+
+  border-collapse: collapse;
+
+  font-size: 16px;
+
+}
+
+th,
+
+td {
+
+  text-align: left;
+
+  padding: 9px;
+
+  border-bottom: 1px solid var(--line);
+
+}
+
+th {
+
+  color: var(--muted);
+
+}
+
+.calc {
+
+  grid-template-columns: 315px 1fr;
+
+  gap: 20px;
+
+}
+
+.controls {
+
+  padding: 14px 17px;
+
+}
+
+.row {
+
+  margin: 8px 0;
+
+}
+
+.row label {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 8px;
+
+  font-size: 14px;
+
+}
+
+.row output {
+
+  color: var(--gold);
+
+  font-variant-numeric: tabular-nums;
+
+}
+
+input[type="range"] {
+
+  width: 100%;
+
+  accent-color: var(--gold);
+
+  margin: 5px 0 0;
+
+  height: 16px;
+
+}
+
+select,
+
+button {
+
+  font: inherit;
+
+  border: 1px solid #405775;
+
+  border-radius: 7px;
+
+  background: #0c1828;
+
+  color: var(--text);
+
+  padding: 6px 8px;
+
+}
+
+select {
+
+  font-size: 14px;
+
+  max-width: 100%;
+
+}
+
+.selects {
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 10px;
+
+}
+
+.selects label {
+
+  font-size: 13px;
+
+  color: var(--muted);
+
+}
+
+.selects select {
+
+  width: 100%;
+
+  margin: 3px 0;
+
+}
+
+.results {
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 9px;
+
+}
+
+.metric {
+
+  padding: 10px 12px;
+
+  background: #17263a;
+
+  border: 1px solid var(--line);
+
+  border-radius: 10px;
+
+  font-size: 13px;
+
+}
+
+.metric strong {
+
+  display: block;
+
+  font-size: 23px;
+
+  line-height: 1.4;
+
+}
+
+.pass {
+
+  color: var(--green);
+
+}
+
+.fail {
+
+  color: var(--red);
+
+}
+
+.status {
+
+  padding: 9px 12px;
+
+  border-radius: 8px;
+
+  background: #243349;
+
+  font-size: 14px;
+
+  margin: 8px 0;
+
+}
+
+.meter {
+
+  height: 7px;
+
+  background: #0a1322;
+
+  border-radius: 5px;
+
+  overflow: hidden;
+
+  margin-top: 6px;
+
+}
+
+.meter span {
+
+  display: block;
+
+  height: 100%;
+
+  background: var(--blue);
+
+}
+
+a {
+
+  color: var(--blue);
+
+}
+
+button {
+
+  cursor: pointer;
+
+  font-size: 13px;
+
+}
+
+.examples {
+
+  display: flex;
+
+  gap: 7px;
+
+  margin-top: 10px;
+
+}
+
+.tight p {
+
+  font-size: 16px;
+
+  margin: 7px 0;
+
+}
+
+.tight p.small {
+
+  font-size: 14px;
+
+}
+
+.steps p {
+
+  padding: 10px 0;
+
+  border-bottom: 1px solid var(--line);
+
+}
+
+.steps b {
+
+  color: var(--gold);
+
+}
+
+@media print {
+
+  body {
+
+    background: white;
+
+  }
+
+  main {
+
+    padding: 0;
+
+  }
+
+  .wrap {
+
+    break-after: page;
+
+    margin: 0 !important;
+
+    width: 960px !important;
+
+    height: 720px !important;
+
+  }
+
+  .slide {
+
+    transform: none !important;
+
+    border-radius: 0;
+
+  }
+
+  button {
+
+    display: none;
+
+  }
+
+  @page {
+
+    size: landscape;
+
+    margin: 8mm;
+
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<main>
+
+<!-- 1ページ目 -->
+
+<div class="wrap">
+
+<section class="slide">
+
+  <div class="eyebrow">BOLT DESIGN / 01</div>
+
+  <h1>
+
+    ネジの強度計算<br>
+
+    <span class="tag">「どの力を受けるか」</span>から考える。
+
+  </h1>
+
+  <p class="sub">
+
+    モータの取付け・ブラケットの固定・カバーの締結に。<br>
+
+    径や本数を決める前に、力の流れと壊れ方をつかむ。
+
+  </p>
+
+  <div class="grid" style="margin-top:24px">
+
+    <div class="card">
+
+      <h3>ネジは、部品を押さえるばね</h3>
+
+      <svg
+
+        viewBox="0 0 390 245"
+
+        role="img"
+
+        aria-label="ボルトが2枚の部品を締め付ける断面模式図"
+
+      >
+
+        <defs>
+
+          <marker
+
+            id="arrow"
+
+            viewBox="0 0 10 10"
+
+            refX="8"
+
+            refY="5"
+
+            markerWidth="7"
+
+            markerHeight="7"
+
+            orient="auto-start-reverse"
+
+          >
+
+            <path d="M0 0L10 5L0 10Z" fill="#ffd16b"/>
+
+          </marker>
+
+        </defs>
+
+        <rect
+
+          x="50" y="73" width="290" height="60"
+
+          rx="5" fill="#356085"
+
+        />
+
+        <rect
+
+          x="50" y="135" width="290" height="60"
+
+          rx="5" fill="#284363"
+
+        />
+
+        <rect
+
+          x="180" y="50" width="32" height="169"
+
+          fill="#b2bdc9"
+
+        />
+
+        <rect
+
+          x="152" y="48" width="88" height="25"
+
+          rx="4" fill="#e4ebf1"
+
+        />
+
+        <rect
+
+          x="155" y="195" width="82" height="25"
+
+          rx="3" fill="#d5dfe9"
+
+        />
+
+        <path
+
+          d="M95 20V65 M290 20V65 M95 241V204 M290 241V204"
+
+          stroke="#ffd16b"
+
+          stroke-width="4"
+
+          marker-end="url(#arrow)"
+
+        />
+
+        <text x="250" y="110">部品 A</text>
+
+        <text x="250" y="176">部品 B</text>
+
+        <text x="14" y="31">押す</text>
+
+      </svg>
+
+    </div>
+
+    <div class="card steps">
+
+      <h3>確認するのは、この3つ</h3>
+
+      <p>
+
+        <b>引張・せん断</b><br>
+
+        ボルトが伸びきったり、切れたりしないか。
+
+      </p>
+
+      <p>
+
+        <b>離間</b><br>
+
+        接合面が開いて、押さえる力を失わないか。
+
+      </p>
+
+      <p>
+
+        <b>滑り</b><br>
+
+        横荷重で部品がずれないか。
+
+      </p>
+
+    </div>
+
+  </div>
+
+  <span class="page">01 / 07</span>
+
+</section>
+
+</div>
+
+<!-- 2ページ目 -->
+
+<div class="wrap">
+
+<section class="slide">
+
+  <div class="eyebrow">LOAD PATH / 02</div>
+
+  <h2>軸方向と横方向では、力の受け方が違う</h2>
+
+  <p class="sub">
+
+    この教材は「同じボルト n 本で、中心にかかる静荷重を均等に分担する」モデル。
+
+  </p>
+
+  <div class="grid" style="margin-top:22px">
+
+    <div class="card">
+
+      <h3 class="blue">軸方向：部品を引き離す P</h3>
+
+      <svg viewBox="0 0 390 200" role="img" aria-label="軸方向の引張外力">
+
+        <rect x="65" y="75" width="260" height="45" fill="#356085"/>
+
+        <rect x="65" y="123" width="260" height="45" fill="#284363"/>
+
+        <rect x="180" y="60" width="30" height="123" fill="#b2bdc9"/>
+
+        <rect x="157" y="51" width="76" height="24" fill="#e4ebf1"/>
+
+        <rect x="157" y="168" width="76" height="23" fill="#e4ebf1"/>
+
+        <path
+
+          d="M100 70V15 M290 175V198"
+
+          stroke="#ffd16b"
+
+          stroke-width="4"
+
+          marker-end="url(#arrow)"
+
+        />
+
+        <text x="115" y="32">引張外力 P</text>
+
+      </svg>
+
+      <div class="formula">1本分の外力 p = P / n</div>
+
+      <p>
+
+        締付力があるため、離間するまでは<br>
+
+        <b>p の一部だけ</b>がボルト軸力に加わる。
+
+      </p>
+
+    </div>
+
+    <div class="card">
+
+      <h3 class="blue">横方向：部品をずらす Q</h3>
+
+      <svg viewBox="0 0 390 200" role="img" aria-label="横方向の荷重">
+
+        <rect x="65" y="65" width="260" height="50" fill="#356085"/>
+
+        <rect x="65" y="119" width="260" height="50" fill="#284363"/>
+
+        <rect x="180" y="48" width="30" height="138" fill="#b2bdc9"/>
+
+        <rect x="157" y="41" width="76" height="24" fill="#e4ebf1"/>
+
+        <rect x="157" y="169" width="76" height="23" fill="#e4ebf1"/>
+
+        <path
+
+          d="M255 90H365 M130 145H20"
+
+          stroke="#ffd16b"
+
+          stroke-width="4"
+
+          marker-end="url(#arrow)"
+
+        />
+
+        <text x="246" y="30">横荷重 Q</text>
+
+      </svg>
+
+      <div class="formula">摩擦で保持 ／ 軸で直接受ける</div>
+
+      <p>
+
+        <b>摩擦接合：</b>接合面の摩擦が横荷重を支える。<br>
+
+        <b>直接せん断：</b>ボルト断面で横荷重を受ける。
+
+      </p>
+
+    </div>
+
+  </div>
+
+  <div class="note" style="margin-top:20px">
+
+    偏心荷重・モーメント・こじりがあると均等分担にならない。
+
+    P / n、Q / n をそのまま使わず、最大負担ボルトを求める。
+
+  </div>
+
+  <span class="page">02 / 07</span>
+
+</section>
+
+</div>
+
+<!-- 3ページ目 -->
+
+<div class="wrap">
+
+<section class="slide">
+
+  <div class="eyebrow">AREA &amp; STRENGTH / 03</div>
+
+  <h2>ネジ山がある部分は、呼び径の丸棒より弱い</h2>
+
+  <div class="grid" style="margin-top:20px">
+
+    <div class="card">
+
+      <h3>引張には、有効断面積 Aₛ を使う</h3>
+
+      <div class="formula">
+
+        Aₛ ≈ π / 4 × (d − 0.9382pₜ)²
+
+      </div>
+
+      <p class="small">
+
+        d：呼び径 [mm]　pₜ：ピッチ [mm]<br>
+
+        Aₛ：引張応力を計算する有効断面積 [mm²]
+
+      </p>
+
+      <svg viewBox="0 0 380 175" role="img" aria-label="M8の丸棒断面積と有効断面積の比較">
+
+        <circle
+
+          cx="104" cy="83" r="66"
+
+          fill="#29425d" stroke="#69b9ff" stroke-width="2"
+
+        />
+
+        <circle
+
+          cx="104" cy="83" r="56"
+
+          fill="#ffd16b" fill-opacity=".3"
+
+          stroke="#ffd16b" stroke-width="2"
+
+        />
+
+        <text x="191" y="65">M8・並目 1.25 mm</text>
+
+        <text x="191" y="99">丸棒：50.3 mm²</text>
+
+        <text x="191" y="132">Aₛ：約 36.6 mm²</text>
+
+      </svg>
+
+      <div class="formula">引張応力 σ = Fᵦ / Aₛ</div>
+
+      <p class="small">
+
+        Fᵦ：1本のボルト軸力 [N]<br>
+
+        1 N/mm² = 1 MPa。N と mm でそろえる。
+
+      </p>
+
+    </div>
+
+    <div class="card">
+
+      <h3>強度区分の数字を読む</h3>
+
+      <p>
+
+        <b class="tag">8.8</b> → 公称引張強さ 800 MPa<br>
+
+        公称降伏応力 800 × 0.8 = 640 MPa
+
+      </p>
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>区分</th>
+
+            <th>公称引張</th>
+
+            <th>公称降伏</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          <tr><td>4.6</td><td>400</td><td>240</td></tr>
+
+          <tr><td>8.8</td><td>800</td><td>640</td></tr>
+
+          <tr><td>10.9</td><td>1,000</td><td>900</td></tr>
+
+          <tr><td>12.9</td><td>1,200</td><td>1,080</td></tr>
+
+        </tbody>
+
+      </table>
+
+      <p class="small">
+
+        単位：MPa。本教材は数字から求めた公称降伏値を比較基準 S に使用。
+
+        規格の最小耐力・保証荷重応力とは区別する。
+
+      </p>
+
+      <div class="formula">安全率 s = S / σ</div>
+
+      <p class="small">
+
+        実設計では径・製品・規格に適した保証値を使用。
+
+        ステンレスの A2-70 などには、この区分を適用しない。
+
+      </p>
+
+    </div>
+
+  </div>
+
+  <span class="page">03 / 07</span>
+
+</section>
+
+</div>
+
+<!-- 4ページ目 -->
+
+<div class="wrap">
+
+<section class="slide">
+
+  <div class="eyebrow">PRELOAD / 04</div>
+
+  <h2>締付力 ＋ 外力の一部 ＝ ボルトの軸力</h2>
+
+  <div class="grid" style="margin-top:20px">
+
+    <div class="card tight">
+
+      <h3>① トルクから締付力を概算</h3>
+
+      <div class="formula">Fᵢ ≈ 1000 T / (K d)</div>
+
+      <p>
+
+        T：1本の締付トルク [N·m]<br>
+
+        K：トルク係数　d：呼び径 [mm]
+
+      </p>
+
+      <p class="small">
+
+        K はネジ面・座面の摩擦などで変わる。<br>
+
+        同じ T でも K が小さいと Fᵢ は大きくなる。
+
+      </p>
+
+      <h3 style="margin-top:23px">② 外力の分担を、ばねで考える</h3>
+
+      <div class="formula">C = kᵦ / (kᵦ + k꜀)</div>
+
+      <p>
+
+        kᵦ：ボルトのばね定数<br>
+
+        k꜀：締結部品の圧縮ばね定数
+
+      </p>
+
+      <p class="small">
+
+        C は内外力比の簡略モデル。
+
+        実際は荷重の作用位置や部品形状も影響する。
+
+        教材では C を直接指定する。
+
+      </p>
+
+    </div>
+
+    <div class="card tight">
+
+      <h3>接合面が閉じている間</h3>
+
+      <div class="formula">
+
+        Fᵦ = Fᵢ + C p<br>
+
+        F꜀ = Fᵢ − (1 − C) p
+
+      </div>
+
+      <p>
+
+        Fᵦ：ボルト軸力 [N/本]<br>
+
+        F꜀：残っている押付力 [N/本]
+
+      </p>
+
+      <p class="small">
+
+        例えば C = 0.2 なら、外力の20%が軸力増加、
+
+        80%が押付力の減少に回る。
+
+      </p>
+
+      <h3 style="margin-top:23px">F꜀ = 0 になると、離間する</h3>
+
+      <div class="formula">pₛₑₚ = Fᵢ / (1 − C)</div>
+
+      <p>離間後：<b>Fᵦ = p、F꜀ = 0</b></p>
+
+      <p class="small">
+
+        離間後も Fᵢ + Cp を延長しない。<br>
+
+        変形は線形弾性を仮定。降伏後の変形は扱わない。
+
+      </p>
+
+    </div>
+
+  </div>
+
+  <div class="note" style="margin-top:20px">
+
+    締め付けを強めると離間・滑りを抑えやすいが、
+
+    ボルトの引張余裕は減る。締め過ぎても良くない。
+
+  </div>
+
+  <span class="page">04 / 07</span>
+
+</section>
+
+</div>
+
+<!-- 5ページ目：操作画面 -->
+
+<div class="wrap">
+
+<section class="slide">
+
+  <div class="eyebrow">INTERACTIVE / 05</div>
+
+  <h2>条件を動かして、力と安全率を比較する</h2>
+
+  <div class="grid calc">
+
+    <div class="card controls">
+
+      <div class="selects">
+
+        <label>
+
+          ネジ（並目）
+
+          <select id="diam">
+
+            <option value="3">M3</option>
+
+            <option value="4">M4</option>
+
+            <option value="5">M5</option>
+
+            <option value="6">M6</option>
+
+            <option value="8" selected>M8</option>
+
+            <option value="10">M10</option>
+
+            <option value="12">M12</option>
+
+            <option value="16">M16</option>
+
+            <option value="20">M20</option>
+
+          </select>
+
+        </label>
+
+        <label>
+
+          強度区分
+
+          <select id="grade">
+
+            <option>4.6</option>
+
+            <option selected>8.8</option>
+
+            <option>10.9</option>
+
+            <option>12.9</option>
+
+          </select>
+
+        </label>
+
+      </div>
+
+      <div id="sliders"></div>
+
+      <label class="small" for="mode">横荷重の受け方</label>
+
+      <select id="mode">
+
+        <option value="friction">摩擦接合（接合面1面）</option>
+
+        <option value="shear">直接せん断（ねじ無し軸・1面）</option>
+
+      </select>
+
+      <div class="examples">
+
+        <button id="reset" type="button">標準例</button>
+
+        <button id="openCase" type="button">離間する例</button>
+
+        <button id="slipCase" type="button">滑る例</button>
+
+      </div>
+
+    </div>
+
+    <div>
+
+      <svg
+
+        id="live"
+
+        viewBox="0 0 530 205"
+
+        role="img"
+
+        aria-label="入力値に連動する締結部断面図"
+
+      ></svg>
+
+      <div
+
+        class="results"
+
+        id="metrics"
+
+        aria-live="polite"
+
+      ></div>
+
+      <div id="status"></div>
+
+      <div id="values" class="small"></div>
+
+      <p class="small" style="margin-top:8px">
+
+        図は代表1本の模式図。径・軸力の矢印・離間状態が連動。
+
+        変形は説明用に誇張。
+
+      </p>
+
+    </div>
+
+  </div>
+
+  <span class="page">05 / 07</span>
+
+</section>
+
+</div>
+
+<!-- 6ページ目 -->
+
+<div class="wrap">
+
+<section class="slide">
+
+  <div class="eyebrow">SHEAR &amp; MARGIN / 06</div>
+
+  <h2>「滑らない」と「ボルトが切れない」は別の判定</h2>
+
+  <div class="grid" style="margin-top:20px">
+
+    <div class="card tight">
+
+      <h3 class="blue">摩擦接合モード</h3>
+
+      <p>
+
+        残っている押付力で、横荷重を支える。<br>
+
+        接合面1面・全ボルトの押付力を合計。
+
+      </p>
+
+      <div class="formula">
+
+        Qₗᵢₘ = μ n F꜀<br>
+
+        s滑り = Qₗᵢₘ / Q
+
+      </div>
+
+      <p>
+
+        μ：
